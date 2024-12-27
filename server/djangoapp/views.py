@@ -23,9 +23,6 @@ from .populate import initiate
 logger = logging.getLogger(__name__)
 
 
-# Create your views here.
-
-# Create a `login_request` view to handle sign in request
 @csrf_exempt
 def login_user(request):
     # Get username and password from request.POST dictionary
@@ -45,7 +42,7 @@ def login_user(request):
 # Create a `logout_request` view to handle sign out request
 def logout_request(request):
     logout(request)
-    data = {"userName":request.user.username}
+    data = {"userName": request.user.username}
     #data = {"userName":{sessionStorage.getItem('username')}}
     return JsonResponse(data)
 
@@ -67,8 +64,9 @@ def registration(request):
         # Check if user already exists
         User.objects.get(username=username)
         username_exist = True
-    except:
+    except Exception as err:
         # If not, simply log this is a new user
+        logger.debug(err)
         logger.debug("{} is new user".format(username))
 
     # If it is a new user
@@ -78,10 +76,10 @@ def registration(request):
             last_name=last_name,password=password, email=email)
         # Login the user and redirect to list page
         login(request, user)
-        data = {"userName":username ,"status": "Authenticated"}
+        data = {"userName": username ,"status": "Authenticated"}
         return JsonResponse(data)
     else :
-        data = {"userName":username, "error": "Already Registered"}
+        data = {"userName": username, "error": "Already Registered"}
         return JsonResponse(data)
 
 
@@ -141,7 +139,9 @@ def add_review(request):
             response = post_review(data)
             response = None # Just to use it
             return JsonResponse({"status": 200})
-        except:
-            return JsonResponse({"status": 401, "message": "Error in posting review"})
+        except Exception as err:
+            print(err)
+            return JsonResponse({"status": 401, 
+                    "message": "Error in posting review"})
     else:
         return JsonResponse({"status": 403, "message": "Unauthorized"})
