@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import "./Dealers.css";
 import "../assets/style.css";
@@ -32,6 +33,7 @@ const Dealers = () => {
     });
     const retobj = await res.json();
     if(retobj.status === 200) {
+      print("Deals received")
       let all_dealers = Array.from(retobj.dealers)
       let states = [];
       all_dealers.forEach((dealer)=>{
@@ -40,6 +42,9 @@ const Dealers = () => {
 
       setStates(Array.from(new Set(states)))
       setDealersList(all_dealers)
+    }
+    else{
+        print("No deals received")
     }
   }
   useEffect(() => {
